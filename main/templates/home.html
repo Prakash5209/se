@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <br>
+            <input class="btn btn-primary" type="submit" value="submit">
+        </form>
+    </div><hr>
+    <h3>saved context</h3>
+
+
+    {% for i in blog %}
+        <div class="card">
+            <div class="card-header">
+                <a href="{% url 'account:userProfile' i.user.real_user.id %}">{{i.user}}</a>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{i.title}}</h5>
+                <p class="card-text">{{i.description}}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <p><label for="id_comment">Comment</label>
+                        <input class="form-control" type="text" name="comment">
+                        <input type="hidden" value="{{i.id}}" name="post"><br>
+                        <input class="btn btn-success" type="submit" value="submit">
+                    </p>
+                </form>
+            </div>
+            <div class="card-footer ">
+                <div>
+                    {% for j in comment %}
+                        {% if j.blog.id == i.id %}
+                            <p>{{j.user}}: {{j.comment}} {% if j.user == request.user %}<span><a href="{% url 'main:deletepost' j.id %}">delete</a></span>{% endif %}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div><br>
+    {% endfor %}
+
+
+
+{% endblock %}
